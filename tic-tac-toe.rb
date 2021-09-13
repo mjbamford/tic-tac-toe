@@ -23,37 +23,39 @@
 # else
 #   Output Draw
 
+# require "./print_grid"
+require "./lib/print_grid"
+require "./lib/player_move"
+require "./lib/check_for_winner"
+require "./lib/check_for_draw"
+
 grid = [
-  ['x', nil, 'x'],
-  ['x', 'o', 'x'],
-  ['x', nil, 'x']
+  [nil, nil, nil],
+  [nil, nil, nil],
+  [nil, nil, nil]
 ]
 
-def print_grid(grid)
-  board = grid.map do |row|
-    display_row = row.map { |cell| cell.nil? ? ' ' : cell }
-    display_row.join('|')
-  end
+grid = [
+  ['x', 'o', 'x'],
+  ['o', 'x', 'o'],
+  [nil, nil, 'o']
+]
 
-  board = board.join("\n#{'-'*5}\n")
-  puts board
+winner = nil
+
+until winner
+  print_grid(grid)
+  player_move('x', grid)
+  winner = check_for_winner(grid)
+  break if winner
+  break if draw?(grid)
+
+  print_grid(grid)
+  player_move('o', grid)
+  winner = check_for_winner(grid)
+  break if draw?(grid)
 end
 
-def player_move(player, grid)
-  begin
-    print "Player '#{player}' move (x,y): "
-    pos = gets.chomp
-    row, col = pos.split(',').map { |num| num.to_i }
-  end until grid[row][col].nil?
-
-  grid[row][col] = player
-end
-
-print_grid(grid)
-
-player_move('x', grid)
-print_grid(grid)
-
-player_move('o', grid)
-print_grid(grid)
+print_grid grid
+puts winner ? "The winner is #{winner}" : "Draw!"
 
